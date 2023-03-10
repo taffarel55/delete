@@ -15,10 +15,13 @@ const create = async (req, res, next) => {
 
 const read = async (req, res, next) => {
   try {
-    const card = await Card.findOne({ id: req.params.id });
+    const { id } = req.params;
+    const card = await Card.findOne({ id });
+
     if (!card) {
-      throw new Error(404, "Cartão não encontrado");
+      throw new Error(404, `Cartão ${id} não encontrado`);
     }
+
     res.status(200).json(card);
   } catch (error) {
     next(error);
@@ -26,17 +29,20 @@ const read = async (req, res, next) => {
 };
 
 const update = async (req, res, next) => {
-  const updates = Object.keys(req.body);
-  const allowedUpdates = ["name", "permissions"];
-  const isValidUpdate = updates.every((update) =>
-    allowedUpdates.includes(update)
-  );
-
-  if (!isValidUpdate) {
-    throw new Error(400, "Atualizações inválidas");
-  }
-
   try {
+    const updates = Object.keys(req.body);
+    const allowedUpdates = ["name", "permissions"];
+    const isValidUpdate = updates.every((update) =>
+      allowedUpdates.includes(update)
+    );
+
+    if (!isValidUpdate) {
+      throw new Error(
+        400,
+        `Há parâmetros que não podem ser alterados, os parâmetros permitidos são: ${allowedUpdates}`
+      );
+    }
+
     const card = await Card.findOne({ id: req.params.id });
 
     if (!card) {

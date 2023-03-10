@@ -4,8 +4,6 @@ const cards = require("../controllers/cards");
 
 const routes = express();
 
-routes.get("/", users.main);
-
 routes.post("/cards", cards.create);
 routes.get("/cards/:id", cards.read);
 routes.patch("/cards/:id", cards.update);
